@@ -5,13 +5,13 @@ import javax.net.ssl.HttpsURLConnection
 
 interface CloudDataSource {
 
-    fun fetchNewsJson(): NewsItemsData
+    suspend fun fetchNewsJson(): NewsItemsData
 
     class Base(
         private val jsonParser: JsonParser<NewsItemsData>
     ) : CloudDataSource {
 
-        override fun fetchNewsJson(): NewsItemsData {
+        override suspend fun fetchNewsJson(): NewsItemsData {
             val connection = URL(URL_JSON).openConnection() as HttpsURLConnection
             val newsItemsData = jsonParser.decodeFromStream(connection.inputStream)
             connection.disconnect()

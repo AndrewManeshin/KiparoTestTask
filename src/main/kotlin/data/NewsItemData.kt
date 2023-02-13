@@ -2,8 +2,8 @@ package data
 
 import presentation.NewsToUiMapper
 import presentation.LocalDateMapper
-import presentation.News
 import kotlinx.serialization.Serializable
+import presentation.NewsUi
 
 @Serializable
 data class NewsItemData(
@@ -24,13 +24,13 @@ interface NewsItemMapper<T> {
     class Base(
         private val localDateParser: LocalDateMapper,
         private val dateParserToUi: NewsToUiMapper
-    ) : NewsItemMapper<News> {
+    ) : NewsItemMapper<NewsUi> {
         override fun map(
             id: Int,
             title: String,
             description: String,
             date: String,
             kewWords: ArrayList<String>
-        ) = News(id, title, description, date, kewWords, localDateParser, dateParserToUi)
+        ) = NewsUi(title, description, date, kewWords, localDateParser, dateParserToUi)
     }
 }

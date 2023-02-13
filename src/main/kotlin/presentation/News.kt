@@ -6,8 +6,7 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.collections.ArrayList
 
-data class News(
-    private val id: Int,
+class NewsUi(
     private val title: String,
     private val description: String,
     private val date: String,
@@ -23,10 +22,22 @@ data class News(
     }
 }
 
-class NewsWrapper(private val news: List<News>) {
-    fun map(show: Show) = news.forEach { it.map(show) }
-}
+sealed class NewsUiState {
 
+    abstract fun map(show: Show)
+
+    object Empty : NewsUiState() {
+        override fun map(show: Show) = show.show("List is empty")
+    }
+
+    class Success(private val news: List<NewsUi>) : NewsUiState() {
+        override fun map(show: Show) = news.forEach { it.map(show) }
+    }
+
+    class Error(private val message: String) : NewsUiState() {
+        override fun map(show: Show) = show.show(message)
+    }
+}
 
 interface NewsToUiMapper {
 

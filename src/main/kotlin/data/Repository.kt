@@ -1,33 +1,49 @@
 package data
 
-import presentation.News
-import presentation.NewsWrapper
+import presentation.NewsUi
+import presentation.NewsUiState
+import java.lang.Exception
+import java.net.UnknownHostException
 
 interface Repository {
 
-    fun fetchNewsFromJson(): NewsWrapper
+    suspend fun fetchNewsFromJson(): NewsUiState
 
-    fun sortNews(): NewsWrapper
+    fun sortNews(): NewsUiState
 
-    fun searchNews(kewWord: String): NewsWrapper
+    fun searchNews(kewWord: String): NewsUiState
 
     class Base(
-        private val cloudDataSource: CloudDataSource, private val mapper: NewsItemsMapper<List<News>>
+        private val cloudDataSource: CloudDataSource, private val mapper: NewsItemsMapper<List<NewsUi>>
     ) : Repository {
 
-        private val news = mutableListOf<News>()
+        private val news = mutableListOf<NewsUi>()
 
-        override fun fetchNewsFromJson(): NewsWrapper {
+        override suspend fun fetchNewsFromJson(): NewsUiState = try {
             news.clear()
             news.addAll(cloudDataSource.fetchNewsJson().map(mapper))
-            println(news.toString())
-            return NewsWrapper(news)
+            NewsUiState.Success(news)
+        } catch (e: Exception) {
+            when (e) {
+                is UnknownHostException -> NewsUiState.Error("No internet connection")
+                else -> NewsUiState.Error("Service unavailable")
+            }
         }
 
-        override fun sortNews() = NewsWrapper(news.sortedByDescending { newsDomain ->
-            newsDomain.localDate()
-        })
+        override fun sortNews(): NewsUiState {
+            return if (news.isEmpty())
+                NewsUiState.Empty
+            else
+                NewsUiState.Success(news.sortedByDescending { newsDomain ->
+                    newsDomain.localDate()
+                })
+        }
 
-        override fun searchNews(kewWord: String) = NewsWrapper(news.filter { news -> news.containsKeyWord(kewWord) })
+        override fun searchNews(kewWord: String): NewsUiState {
+            return if (news.isEmpty())
+                NewsUiState.Empty
+            else
+                NewsUiState.Success(news.filter { news -> news.containsKeyWord(kewWord) })
+        }
     }
 }
