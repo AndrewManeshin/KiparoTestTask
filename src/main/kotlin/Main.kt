@@ -1,7 +1,7 @@
 import data.*
 import kotlinx.coroutines.runBlocking
 import presentation.LocalDateMapper
-import presentation.NewsToUiMapper
+import presentation.DateToUiMapper
 import presentation.Show
 
 fun main() {
@@ -21,7 +21,7 @@ fun main() {
         cloudDataSource,
         NewsItemsMapper.Base(
             NewsItemMapper.Base(
-                LocalDateMapper.Base(datePattern), NewsToUiMapper.Base(datePattern)
+                LocalDateMapper.Base(datePattern), DateToUiMapper.Base(datePattern)
             )
         )
     )

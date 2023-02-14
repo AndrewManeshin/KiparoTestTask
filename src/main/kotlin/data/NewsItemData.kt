@@ -1,6 +1,6 @@
 package data
 
-import presentation.NewsToUiMapper
+import presentation.DateToUiMapper
 import presentation.LocalDateMapper
 import kotlinx.serialization.Serializable
 import presentation.NewsUi
@@ -31,7 +31,7 @@ interface NewsItemMapper<T> {
 
     class Base(
         private val localDateParser: LocalDateMapper,
-        private val dateParserToUi: NewsToUiMapper
+        private val dateParserToUi: DateToUiMapper
     ) : NewsItemMapper<NewsUi> {
         override fun map(
             id: Int,
