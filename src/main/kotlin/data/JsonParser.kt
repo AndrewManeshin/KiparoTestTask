@@ -6,6 +6,7 @@ import kotlinx.serialization.json.decodeFromStream
 import java.io.InputStream
 
 interface JsonParser<T> {
+
     fun decodeFromStream(stream: InputStream): T
 
     class Base : JsonParser<NewsItemsData> {

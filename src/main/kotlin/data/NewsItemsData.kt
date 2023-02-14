@@ -2,10 +2,19 @@ package data
 
 import kotlinx.serialization.Serializable
 import presentation.NewsUi
+import javax.xml.bind.annotation.*
 
 @Serializable
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlRootElement(name = "root")
 data class NewsItemsData(
-    private val name: String, private val location: String, private val news: ArrayList<NewsItemData>
+    @XmlElement(name = "name")
+    private val name: String = "",
+    @XmlElement(name = "location")
+    private val location: String = "",
+    @XmlElementWrapper(name = "news")
+    @field:XmlElement(name = "element")
+    private val news: ArrayList<NewsItemData> = ArrayList()
 ) {
 
     fun <T> map(mapper: NewsItemsMapper<T>): T = mapper.map(news)

@@ -1,6 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
+    `java-library`
     kotlin("jvm") version "1.7.21"
     kotlin("plugin.serialization") version "1.8.0"
     application
@@ -16,6 +17,7 @@ repositories {
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0-RC")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    implementation("com.sun.xml.bind:jaxb-impl:2.3.3")
 
     testImplementation(kotlin("test"))
 }
