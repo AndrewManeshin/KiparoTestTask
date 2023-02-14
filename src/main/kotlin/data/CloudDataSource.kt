@@ -10,14 +10,14 @@ interface CloudDataSource {
     suspend fun fetchNews(): NewsItemsData
 
     class Base(
-        private val parser: Parser<NewsItemsData>,
-        private val url: String
+        private val parser: Parser<NewsItemsData>, private val url: String
     ) : CloudDataSource {
 
         override suspend fun fetchNews(): NewsItemsData {
             val connection = withContext(Dispatchers.IO) {
                 URL(url).openConnection()
             } as HttpsURLConnection
+            connection.addRequestProperty("User-Agent", "Mozilla")
             val newsItemsData = parser.decodeFromStream(connection.inputStream)
             connection.disconnect()
             return newsItemsData

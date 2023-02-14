@@ -1,5 +1,7 @@
 import data.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import presentation.LocalDateMapper
 import presentation.DateToUiMapper
 import presentation.Show
@@ -27,7 +29,12 @@ fun main() {
     )
 
     runBlocking {
-        repository.fetchNews().map(show)
+        withContext(Dispatchers.IO) {
+            val news = repository.fetchNews()
+            withContext(Dispatchers.Default) {
+                news.map(show)
+            }
+        }
     }
 
     show.show("\nPress any key for sort data")
