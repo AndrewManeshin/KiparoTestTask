@@ -9,7 +9,6 @@ import javax.xml.bind.annotation.XmlAccessorType
 import javax.xml.bind.annotation.XmlElement
 import javax.xml.bind.annotation.XmlElementWrapper
 
-
 @Serializable
 @XmlAccessorType(XmlAccessType.FIELD)
 data class NewsItemData(
@@ -27,6 +26,7 @@ data class NewsItemData(
 }
 
 interface NewsItemMapper<T> {
+
     fun map(id: Int, title: String, description: String, date: String, kewWords: ArrayList<String>): T
 
     class Base(

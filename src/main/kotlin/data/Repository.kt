@@ -7,39 +7,27 @@ import java.net.UnknownHostException
 
 interface Repository {
 
-    suspend fun fetchNewsJson(): NewsUiState
-
-    suspend fun fetchNewsXml(): NewsUiState
+    suspend fun fetchNews(): NewsUiState
 
     fun sortNews(): NewsUiState
 
     fun searchNews(kewWord: String): NewsUiState
 
     class Base(
-        private val cloudDataSource: CloudDataSource, private val mapper: NewsItemsMapper<List<NewsUi>>
+        private val cloudDataSource: CloudDataSource,
+        private val mapper: NewsItemsMapper<List<NewsUi>>
     ) : Repository {
 
         private val news = mutableListOf<NewsUi>()
 
-        override suspend fun fetchNewsJson(): NewsUiState = try {
+        override suspend fun fetchNews(): NewsUiState = try {
             news.clear()
-            news.addAll(cloudDataSource.fetchNewsJson().map(mapper))
+            news.addAll(cloudDataSource.fetchNews().map(mapper))
             NewsUiState.Success(news)
         } catch (e: Exception) {
             when (e) {
-                is UnknownHostException -> NewsUiState.Error("No internet connection")
-                else -> NewsUiState.Error("Service unavailable")
-            }
-        }
-
-        override suspend fun fetchNewsXml(): NewsUiState = try {
-            news.clear()
-            news.addAll(cloudDataSource.fetchNewsXml().map(mapper))
-            NewsUiState.Success(news)
-        } catch (e: Exception) {
-            when (e) {
-                is UnknownHostException -> NewsUiState.Error("No internet connection")
-                else -> NewsUiState.Error("Service unavailable")
+                is UnknownHostException -> NewsUiState.Error(NO_INTERNET_MESSAGE)
+                else -> NewsUiState.Error(SOMETHING_WENT_WRONG_MESSAGE)
             }
         }
 
@@ -58,6 +46,11 @@ interface Repository {
                 NewsUiState.Empty
             else
                 NewsUiState.Success(news)
+        }
+
+        private companion object {
+            const val NO_INTERNET_MESSAGE = "No internet connection"
+            const val SOMETHING_WENT_WRONG_MESSAGE = "Service unavailable"
         }
     }
 }

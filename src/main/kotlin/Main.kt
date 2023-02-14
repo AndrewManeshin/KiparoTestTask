@@ -6,32 +6,33 @@ import presentation.Show
 
 fun main() {
 
+    val urlJson = "https://api2.kiparo.com/static/it_news.json"
+    val urlXml = "https://api2.kiparo.com/static/it_news.xml"
     val datePattern = "yyyy-MM-dd HH:mm:ss Z"
+    val show = Show.Base()
+
+    show.show("Input 1 for downloading Json or 2 for xml: ")
+    val cloudDataSource = if (readln().toInt() == 1)
+        CloudDataSource.Base(Parser.Json(), urlJson)
+    else
+        CloudDataSource.Base(Parser.Xml(), urlXml)
+
     val repository = Repository.Base(
-        CloudDataSource.Base(
-            JsonParser.Base(),
-            XmlParser.Base()
-        ),
+        cloudDataSource,
         NewsItemsMapper.Base(
             NewsItemMapper.Base(
                 LocalDateMapper.Base(datePattern), NewsToUiMapper.Base(datePattern)
             )
         )
     )
-    val show = Show.Base()
 
-    show.show("Input 1 for downloading Json or 2 for xml: ")
-    if (readln().toInt() == 1) {
-        runBlocking {
-            repository.fetchNewsJson().map(show)
-        }
-    } else {
-        runBlocking {
-            repository.fetchNewsXml().map(show)
-        }
+    runBlocking {
+        repository.fetchNews().map(show)
     }
+
     show.show("\nPress any key for sort data")
     readln()
+
     repository.sortNews().map(show)
     while (true) {
         show.show("\nSearch by word: ")
